@@ -1,3 +1,5 @@
+import os
+
 sample_data = """vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg
@@ -46,12 +48,13 @@ def score_badges(lines: list[str]) -> int:
     return score
 
 
-print("Sample missplaced score:", priority_score(sample_data.splitlines()))
-print("Sample badge score:", score_badges(sample_data.splitlines()))
+if __name__ == "__main__":
+    basedir = os.path.dirname(__file__)
+    with open(os.path.join(basedir, "data.txt"), "rt") as f:
+        question_data = f.read().splitlines()
 
+    print("Sample missplaced score:", priority_score(sample_data.splitlines()))
+    print("Sample badge score:", score_badges(sample_data.splitlines()))
 
-with open("./data.txt", "rt") as f:
-    question_data = f.readlines()
-
-print("Question missplaced score:", priority_score(question_data))
-print("Question badge score:", score_badges(question_data))
+    print("Question missplaced score:", priority_score(question_data))
+    print("Question badge score:", score_badges(question_data))

@@ -1,3 +1,4 @@
+import os
 from typing import Callable
 
 sample_data = """A Y
@@ -86,18 +87,20 @@ def reverse_score_hand(opp_hand: str, outcome: str) -> int:
 def total_score(data: list[str], scorer: Callable[[str, str], int]) -> int:
     total: list[int] = []
     for id, game in enumerate(data):
-        opp_hand, my_hand = game.strip().split()
+        opp_hand, my_hand = game.split()
         score = scorer(opp_hand, my_hand)
         # print("id:", id, "score:", score)
         total.append(score)
     return sum(total)
 
 
-print(total_score(sample_data.splitlines(), score_hand))
-print(total_score(sample_data.splitlines(), reverse_score_hand))
+if __name__ == "__main__":
+    basedir = os.path.dirname(__file__)
+    with open(os.path.join(basedir, "data.txt"), "rt") as f:
+        question_data = f.read().splitlines()
 
-with open("./data.txt", "rt") as f:
-    print(total_score(f.readlines(), score_hand))
+    print(total_score(sample_data.splitlines(), score_hand))
+    print(total_score(sample_data.splitlines(), reverse_score_hand))
 
-with open("./data.txt", "rt") as f:
-    print(total_score(f.readlines(), reverse_score_hand))
+    print(total_score(question_data, score_hand))
+    print(total_score(question_data, reverse_score_hand))

@@ -1,3 +1,5 @@
+import os
+
 sample_data = """2-4,6-8
 2-3,4-5
 5-7,7-9
@@ -70,12 +72,13 @@ def count_overlap(pairs: list[str]) -> int:
     return overlap_count
 
 
-print("Sample data subset count:", count_subsets(sample_data.splitlines()))
-print("Sample data overlap count:", count_overlap(sample_data.splitlines()))
+if __name__ == "__main__":
+    basedir = os.path.dirname(__file__)
+    with open(os.path.join(basedir, "data.txt"), "rt") as f:
+        question_data = f.read().splitlines()
 
-question_data: list[str] = []
-with open("./day4 data.txt", "rt") as f:
-    question_data = f.readlines()
+    print("Sample data subset count:", count_subsets(sample_data.splitlines()))
+    print("Sample data overlap count:", count_overlap(sample_data.splitlines()))
 
-print("Question data subset count:", count_subsets(question_data))
-print("Question data overlap count:", count_overlap(question_data))
+    print("Question data subset count:", count_subsets(question_data))
+    print("Question data overlap count:", count_overlap(question_data))
