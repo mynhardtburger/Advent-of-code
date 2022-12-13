@@ -4,7 +4,9 @@ sample_data = """30373
 33549
 35390"""
 
+import os
 from dataclasses import dataclass
+from math import dist
 from pprint import pprint
 
 
@@ -24,16 +26,16 @@ Height_map = list[list[int]]
 
 def data_to_los_map(data: list[str]) -> LOS_map:
     output = []
-    for row_id, row_val in enumerate(data):
+    for _, row_val in enumerate(data):
         output.append([])
-        for col_id, col_val in enumerate(row_val):
+        for _, col_val in enumerate(row_val):
             output[-1].append(LOS(height=int(col_val)))
     return output
 
 
 def left_right_top_bottom(los_map: LOS_map) -> LOS_map:
     for row_id, row_val in enumerate(los_map):
-        for col_id, col_val in enumerate(row_val):
+        for col_id, _ in enumerate(row_val):
             if col_id != 0:
                 los_map[row_id][col_id].left = max(
                     los_map[row_id][col_id - 1].height,
@@ -49,7 +51,7 @@ def left_right_top_bottom(los_map: LOS_map) -> LOS_map:
 
 def right_left_bottom_top(los_map: LOS_map) -> LOS_map:
     for row_id, row_val in reversed(list(enumerate(los_map))):
-        for col_id, col_val in reversed(list(enumerate(row_val))):
+        for col_id, _ in reversed(list(enumerate(row_val))):
             if col_id != len(row_val) - 1:
                 los_map[row_id][col_id].right = max(
                     los_map[row_id][col_id + 1].height,
@@ -90,12 +92,59 @@ def create_los_map(data: list[str]) -> tuple[LOS_map, int]:
     return los_map, total_visable
 
 
-test_los_map, test_visable = create_los_map(sample_data.splitlines())
-pprint(test_los_map)
-print("test visable:", test_visable)
+def los_range(trees: list[LOS], source_height: int, reverse_data: bool = False) -> int:
+    if reverse_data:
+        trees = list(reversed(trees))
 
-with open("./day8_data.txt", "rt") as f:
-    question_data = f.read().splitlines()
+    distance = 0
 
-question_los_map, question_visable = create_los_map(question_data)
-print("question visable:", question_visable)
+    for i in range(len(trees)):
+        distance += 1
+        if trees[i].height >= source_height:
+            return distance
+
+    return distance
+
+
+def transpose(x: list[list[LOS]]) -> list[list[LOS]]:
+    return list(map(list, zip(*x)))
+
+
+def scenic_score(los_map: LOS_map, x: int, y: int) -> int:
+    source = los_map[y][x].height
+    if x == 0:
+        return 0
+    if y == 0:
+        return 0
+
+    up = los_range(transpose(los_map)[x][:y], source, reverse_data=True)
+    left = los_range(los_map[y][:x], source, reverse_data=True)
+    down = los_range(transpose(los_map)[x][y + 1 :], source)
+    right = los_range(los_map[y][x + 1 :], source)
+
+    return up * down * left * right
+
+
+def max_scenic_score(los_map: LOS_map) -> int:
+    max_score = 0
+
+    for y in range(len(los_map)):
+        for x in range(len(los_map[y])):
+            max_score = max(scenic_score(los_map, x, y), max_score)
+
+    return max_score
+
+
+if __name__ == "__main__":
+    test_los_map, test_visable = create_los_map(sample_data.splitlines())
+    # pprint(test_los_map)
+    print("test visable:", test_visable)
+    print("test scenic score:", max_scenic_score(test_los_map))
+
+    basedir = os.path.dirname(__file__)
+    with open(os.path.join(basedir, "data.txt"), "rt") as f:
+        question_data = f.read().splitlines()
+
+    question_los_map, question_visable = create_los_map(question_data)
+    print("question visable:", question_visable)
+    print("question scenic score:", max_scenic_score(question_los_map))
