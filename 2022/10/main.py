@@ -220,20 +220,6 @@ def draw_screen(screen: list[str]) -> None:
         print("".join(row))
 
 
-def test_sample():
-    answer, _ = execute(long_sample_data.strip().splitlines())
-    assert answer == 13920
-
-
-def test_question():
-    basedir = os.path.dirname(__file__)
-    with open(os.path.join(basedir, "data.txt"), "rt") as f:
-        question_data = f.read().splitlines()
-
-    answer, _ = execute(question_data)
-    assert answer == 13920
-
-
 if __name__ == "__main__":
     basedir = os.path.dirname(__file__)
     with open(os.path.join(basedir, "data.txt"), "rt") as f:
