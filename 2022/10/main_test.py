@@ -145,9 +145,19 @@ noop
 noop
 noop"""
 
+import os
+
 import main
 
 
-def test_sample():
+def sample_data():
     answer, _ = main.execute(long_sample_data.strip().splitlines())
+    assert sum(answer.values()) == 13140
+
+
+def question_data_part1():
+    basedir = os.path.dirname(__file__)
+    with open(os.path.join(basedir, "data.txt"), "rt") as f:
+        question_data = f.read().splitlines()
+    answer, _ = main.execute(question_data)
     assert sum(answer.values()) == 13920
