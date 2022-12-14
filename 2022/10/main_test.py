@@ -150,4 +150,4 @@ import main
 
 def test_sample():
     answer, _ = main.execute(long_sample_data.strip().splitlines())
-    assert answer == 13920
+    assert sum(answer.values()) == 13920
